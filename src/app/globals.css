@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --tracking-1: 0.07em;
+}
+
+:root {
+  --background: #ffffff;
+}
+
+body {
+  background-color: var(--background);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
