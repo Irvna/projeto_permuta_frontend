@@ -22,7 +22,7 @@ export default function Login() {
                 </div>
             </div>
             <div className="flex justify-center items-center min-h-[30rem] md:h-full text-sm text-black bg-linear-to-b from-[#204573] to-[#10294B] md:bg-none md:bg-white">
-                <div className="flex flex-col w-[80vw] md:w-[40vw] bg-[#F8FBFD] text-black rounded-[2vw] border border-black px-5 md:px-8 py-6 md:py-12 gap-8 md:gap-15">
+                <div className="flex flex-col w-[80vw] md:w-[40vw] bg-[#F8FBFD] rounded-[2vw] border border-black px-5 md:px-8 py-6 md:py-12 gap-8 md:gap-15">
                     <div className="flex flex-col gap-1 md:gap-3">
                         <p className="text-3xl md:text-5xl font-bold tracking-1">Login</p>
                         <p className="text-xs font-light opacity-80">Use seu e-mail e sua senha</p>
@@ -71,11 +71,14 @@ export default function Login() {
 
                         {/* Link extra (opcional) */}
                         <div className="flex flex-col gap-1 text-center">
-                            <Link href="/cadastro" className="text-xs md:text-sm text-blue-600 hover:underline">
+                            <Link href="../cadastro/esqueciSenha" className="text-xs md:text-sm text-blue-600 hover:underline">
                                 Esqueceu a senha?
                             </Link>
                             <a href="#" className="text-xs md:text-sm no-underline">
                                 Não tem conta? <Link href="/cadastro" className="text-blue-600 hover:underline">Criar Conta</Link>
+                            </a>
+                            <a href="#" className="text-xs md:text-sm no-underline">
+                                teste: <Link href="/permutas" className="text-blue-600 hover:underline">teste</Link>
                             </a>
                         </div>
                     </form>

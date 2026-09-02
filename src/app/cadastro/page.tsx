@@ -2,16 +2,16 @@ import Link from 'next/link';
 
 export default function Cadastro() {
     return (
-        <div id="cadastro" className="grid grid-cols-1 min-h-screen w-full h-screen text-white">
-            <div className="flex flex-col justify-between items-justify bg-[#10294B] px-3 md:px-10 py-5 md:py-2">
+        <div id="cadastro" className="flex flex-col min-h-screen w-full text-white">
+            <div className="flex justify-between items-justify bg-[#10294B] px-3 md:px-10 py-5 md:py-2">
                 <img
                     src="/permutaja_logo.png"
                     alt="Logo Permuta Já"
                     className="w-45 aling-justify md:w-90 h-auto"
                 />
             </div>
-            <div className="flex justify-center items-center text-sm text-black bg-linear-to-b from-[#204573] to-[#10294B] lg:bg-none md:bg-white py-8">
-                <div className="flex flex-col w-[80vw] lg:w-[50vw] bg-[#F8FBFD] text-black rounded-[2vw] border border-black px-5 md:px-8 py-6 md:py-12 gap-8 md:gap-15">
+            <div className="flex justify-center items-center text-sm text-black bg-linear-to-b from-[#204573] to-[#10294B] lg:bg-none md:bg-white py-8 h-full">
+                <div className="flex flex-col w-[80vw] lg:w-[50vw] h-auto bg-[#F8FBFD] rounded-[2vw] border border-black px-5 md:px-8 py-6 md:py-12 gap-8 md:gap-15">
                     <div className="flex flex-col gap-1 md:gap-3">
                         <p className="text-3xl md:text-5xl font-bold tracking-1">Criar Conta</p>
                         <p className="text-xs font-light opacity-80">Preencha os campos abaixo para criar sua conta</p>
@@ -69,7 +69,7 @@ export default function Cadastro() {
                             {/* Cidade */}
                             <div className="flex flex-col w-full">
                                 <label htmlFor="cidade" className="text-xs md:text-sm font-bold mb-1">
-                                    Cidade *
+                                    Cidade - UF
                                 </label>
                                 <input
                                     type="text"
@@ -77,7 +77,7 @@ export default function Cadastro() {
                                     //value={email}
                                     //onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
                                     className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
-                                    placeholder="Dourados - MS"
+                                    placeholder="Cidade - UF"
                                     required
                                 />
                             </div>
@@ -102,14 +102,11 @@ export default function Cadastro() {
                             type="submit"
                             className="w-full bg-[#21914E] text-white font-bold py-2 rounded-md transition delay-100 ease-in-out hover:scale-102"
                         >
-                            Entrar
+                            Cadastrar
                         </button>
 
                         {/* Link extra (opcional) */}
                         <div className="flex flex-col gap-1 text-center">
-                            <a href="#" className="text-xs md:text-sm text-blue-600 hover:underline">
-                                Esqueceu a senha?
-                            </a>
                             <a href="#" className="text-xs md:text-sm no-underline">
                                 Possui tem conta? <Link href="/login" className="text-blue-600 hover:underline">Entrar</Link>
                             </a>
