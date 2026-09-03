@@ -78,7 +78,7 @@ export default function Login() {
                                 Não tem conta? <Link href="/cadastro" className="text-blue-600 hover:underline">Criar Conta</Link>
                             </a>
                             <a href="#" className="text-xs md:text-sm no-underline">
-                                teste: <Link href="/permutas" className="text-blue-600 hover:underline">teste</Link>
+                                teste: <Link href="/home" className="text-blue-600 hover:underline">teste</Link>
                             </a>
                         </div>
                     </form>
