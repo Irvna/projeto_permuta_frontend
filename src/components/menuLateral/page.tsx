@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
 
 const ITENS_MENU = [
     {
@@ -56,27 +57,30 @@ function ItemMenu({ icon, label }: { icon: ReactNode; label: string }) {
 
 function BotaoSair() {
     return (
-        <button className="flex justify-center items-center gap-2 w-full py-1 bg-red-500 text-white text-[0.7rem] text-center rounded-sm hover:bg-red-600 cursor-pointer hover:scale-105">
+        <Link href="/login" className="flex justify-center items-center gap-2 w-full py-1 bg-red-500 text-white text-[0.7rem] text-center rounded-sm hover:bg-red-600 cursor-pointer hover:scale-105">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
             </svg>
             Sair
-        </button>
+        </Link>
     );
 }
 
 export default function MenuLateral() {
+    //verifica o stado do menu lateral, se está aberto ou fechado, para telas pequenas
     const [menuAberto, setMenuAberto] = useState(false);
 
     return (
         <>
             {/* Navbar telas pequenas */}
             <div className="flex md:hidden fixed inset-x-0 top-0 z-50 items-center justify-between bg-[#10294B] px-4 py-3">
-                <img
-                    src="/permutaja_logo.png"
-                    alt="Logo Permuta Já"
-                    className="w-28 h-auto"
-                />
+                <Link href="/home">
+                    <img
+                        src="/permutaja_logo.png"
+                        alt="Logo Permuta Já"
+                        className="w-28 h-auto"
+                    />
+                </Link>
 
                 <button
                     onClick={() => setMenuAberto((v) => !v)}
@@ -106,14 +110,16 @@ export default function MenuLateral() {
                 </div>
             )}
 
-            {/* ===== havbar telas grandes ===== */}
+            {/* ===== navbar telas grandes ===== */}
             <div className="hidden md:flex fixed flex-col inset-y-0 left-0 w-[20vw] bg-[#10294B] text-white px-4 py-7 gap-15">
                 <div className="mt-2">
-                    <img
-                        src="/permutaja_logo.png"
-                        alt="Logo Permuta Já"
-                        className="w-35 xs:aling-justify md:w-50 h-auto"
-                    />
+                    <Link href="/home" className="cursor-pointer">
+                        <img
+                            src="/permutaja_logo.png"
+                            alt="Logo Permuta Já"
+                            className="w-35 xs:aling-justify md:w-50 h-auto"
+                        />
+                    </Link>
                 </div>
                 <div className="flex flex-col justify-between h-screen">
                     <div className="flex flex-col gap-4 w-full">

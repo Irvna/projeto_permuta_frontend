@@ -74,12 +74,18 @@ export default function Login() {
                             <Link href="../cadastro/esqueciSenha" className="text-xs md:text-sm text-blue-600 hover:underline">
                                 Esqueceu a senha?
                             </Link>
-                            <a href="#" className="text-xs md:text-sm no-underline">
-                                Não tem conta? <Link href="/cadastro" className="text-blue-600 hover:underline">Criar Conta</Link>
-                            </a>
-                            <a href="#" className="text-xs md:text-sm no-underline">
-                                teste: <Link href="/home" className="text-blue-600 hover:underline">teste</Link>
-                            </a>
+                            <div className="text-xs md:text-sm">
+                                Não tem conta?
+                                <Link href="/cadastro" className="text-blue-600 hover:underline ml-1">
+                                    Criar Conta
+                                </Link>
+                            </div>
+                            <div className="text-xs md:text-sm">
+                                Não tem conta?
+                                <Link href="/home" className="text-blue-600 hover:underline ml-1">
+                                    teste
+                                </Link>
+                            </div>
                         </div>
                     </form>
                 </div>

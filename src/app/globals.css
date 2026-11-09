@@ -1,10 +1,7 @@
 @import "tailwindcss";
 
-@theme {
-  --tracking-1: 0.07em;
-}
-
 :root {
+  --tracking-1: 0.07em;
   --background: #ffffff;
 }
 
