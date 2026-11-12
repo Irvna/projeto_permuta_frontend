@@ -1,4 +1,4 @@
-import MenuLateral from "../../components/menuLateral/page";
+import MenuLateral from "../../components/MenuLateral";
 
 const CARDS_RESUMO = [
     {

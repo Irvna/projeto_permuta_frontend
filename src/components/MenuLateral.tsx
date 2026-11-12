@@ -3,6 +3,11 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 
+const ROTAS: Record<string, string> = {
+    "Meus Pedidos": "/permutas",
+    "Novo Pedido": "/permutas/nova",
+};
+
 const ITENS_MENU = [
     {
         label: "Meus Pedidos",
@@ -48,16 +53,16 @@ const ITENS_MENU = [
 
 function ItemMenu({ icon, label }: { icon: ReactNode; label: string }) {
     return (
-        <div className="flex flex-row items-center gap-2 px-2 h-[1.8rem] bg-[#ffffff40] text-white rounded-sm text-[0.7rem] hover:bg-[#ffffff75] cursor-pointer">
+        <Link href={ROTAS[label] ?? "#"} className="flex flex-row items-center gap-2 px-2 h-[1.8rem] bg-[#ffffff40] text-white rounded-sm text-[0.7rem] hover:bg-[#ffffff75] cursor-pointer">
             {icon}
             {label}
-        </div>
+        </Link>
     );
 }
 
 function BotaoSair() {
     return (
-        <Link href="/login" className="flex justify-center items-center gap-2 w-full py-1 bg-red-500 text-white text-[0.7rem] text-center rounded-sm hover:bg-red-600 cursor-pointer hover:scale-105">
+        <Link href="/login" onClick={() => localStorage.removeItem("token")} className="flex justify-center items-center gap-2 w-full py-1 bg-red-500 text-white text-[0.7rem] text-center rounded-sm hover:bg-red-600 cursor-pointer hover:scale-105">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
             </svg>

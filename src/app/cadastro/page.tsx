@@ -6,10 +6,36 @@ import Link from 'next/link';
 
 const CLASSE_INPUT = "h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all";
 const CLASSE_LABEL = "text-xs md:text-sm font-bold mb-1";
+const CABECALHO = { 'Content-Type': 'application/json' };
+
+type Cidade = { _id: string; nomeCidade: string; estado: string };
+
+async function buscarOuCriarCidade(nomeCidade: string, estado: string): Promise<string> {
+    const nome = nomeCidade.trim().toUpperCase();
+    const uf = estado.trim().toUpperCase();
+
+    async function achar() {
+        const resposta = await fetch('/api/cidades');
+        const lista: Cidade[] = await resposta.json();
+        return lista.find((c) => c.nomeCidade === nome && c.estado === uf);
+    }
+
+    let cidade = await achar();
+    if (!cidade) {
+        await fetch('/api/cidades', {
+            method: 'POST',
+            headers: CABECALHO,
+            body: JSON.stringify({ nomeCidade: nome, estado: uf }),
+        });
+        cidade = await achar();
+    }
+    if (!cidade) throw new Error('Não foi possível salvar a cidade.');
+    return cidade._id;
+}
 
 export default function Cadastro() {
     const router = useRouter();
-    const [form, setForm] = useState({ nome: '', email: '', cargo: '', orgao: '', senha: '' });
+    const [form, setForm] = useState({ nome: '', email: '', cargo: '', orgao: '', cidade: '', estado: '', senha: '' });
     const [erro, setErro] = useState('');
     const [carregando, setCarregando] = useState(false);
 
@@ -22,10 +48,12 @@ export default function Cadastro() {
         setErro('');
         setCarregando(true);
         try {
+            const cidadeAtual = await buscarOuCriarCidade(form.cidade, form.estado);
+            const { nome, email, cargo, orgao, senha } = form;
             const resposta = await fetch('/api/servidores', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form),
+                headers: CABECALHO,
+                body: JSON.stringify({ nome, email, cargo, orgao, senha, cidadeAtual }),
             });
             const dados = await resposta.json();
             if (!resposta.ok) throw new Error(dados.mensagem || dados.error || 'Erro ao cadastrar.');
@@ -69,6 +97,18 @@ export default function Cadastro() {
                                 <label htmlFor="orgao" className={CLASSE_LABEL}>Órgão</label>
                                 <input type="text" id="orgao" value={form.orgao} onChange={(e) => atualizar('orgao', e.target.value)}
                                     className={CLASSE_INPUT} placeholder="Prefeitura Municipal de Dourados" required />
+                            </div>
+                        </div>
+                        <div className="flex flex-col justify-between md:flex-row gap-2">
+                            <div className="flex flex-col w-full md:w-3/4">
+                                <label htmlFor="cidade" className={CLASSE_LABEL}>Cidade</label>
+                                <input type="text" id="cidade" value={form.cidade} onChange={(e) => atualizar('cidade', e.target.value)}
+                                    className={CLASSE_INPUT} placeholder="Dourados" required />
+                            </div>
+                            <div className="flex flex-col w-full md:w-1/4">
+                                <label htmlFor="estado" className={CLASSE_LABEL}>Estado</label>
+                                <input type="text" id="estado" maxLength={2} value={form.estado} onChange={(e) => atualizar('estado', e.target.value)}
+                                    className={CLASSE_INPUT} placeholder="MS" required />
                             </div>
                         </div>
                         <div className="flex flex-col mb-6">
