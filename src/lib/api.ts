@@ -1,5 +1,5 @@
 export type Cidade = { _id: string; nomeCidade: string; estado: string };
-export type Servidor = { _id: string; nome: string; cargo: string; orgao: string; cidadeAtual?: string };
+export type Servidor = { _id: string; nome: string; email?: string; cargo: string; orgao: string; cidadeAtual?: string };
 export type Permuta = {
     _id: string;
     servidor1: string;

@@ -7,6 +7,7 @@ const ROTAS: Record<string, string> = {
     "Meus Pedidos": "/permutas",
     "Novo Pedido": "/permutas/nova",
     "Permutas Disponíveis": "/permutas/disponiveis",
+    "Meu Perfil": "/servidor",
 };
 
 const ITENS_MENU = [
