@@ -6,6 +6,7 @@ import Link from "next/link";
 const ROTAS: Record<string, string> = {
     "Meus Pedidos": "/permutas",
     "Novo Pedido": "/permutas/nova",
+    "Permutas Disponíveis": "/permutas/disponiveis",
 };
 
 const ITENS_MENU = [

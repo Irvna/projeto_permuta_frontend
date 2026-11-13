@@ -10,6 +10,8 @@ export type Permuta = {
     observacoes?: string;
 };
 
+export type PermutaDisponivel = Omit<Permuta, "servidor1"> & { servidor1: Servidor };
+
 export const STATUS: Record<string, { label: string; classe: string }> = {
     solicitada: { label: "Solicitada", classe: "bg-yellow-100 text-yellow-800 border-yellow-300" },
     aceita: { label: "Aceita", classe: "bg-green-100 text-green-700 border-green-300" },
