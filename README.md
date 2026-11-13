@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PermutaJá — Front-end
 
-## Getting Started
+Plataforma que conecta servidores públicos interessados em trocar de cidade de lotação. O servidor publica uma solicitação de permuta e consulta as solicitações de outros servidores.
 
-First, run the development server:
+Este repositório contém o **front-end**. O back-end fica em outro repositório (`projeto_permuta_backend`).
+
+## Funcionalidades
+
+- Cadastro e login de servidores (autenticação por token JWT)
+- Minhas Solicitações: listagem, detalhes, cancelamento e exclusão de permutas
+- Nova Solicitação: escolha da cidade desejada, justificativa e observações
+- Permutas Disponíveis: permutas de outros servidores que ainda estão em aberto
+- Detalhes da Permuta: mostra "Cancelar Permuta" para o dono e "Solicitar Permuta" para os demais
+- Meu Perfil e Edição de Perfil
+- Home com as permutas mais recentes e o nome do usuário logado
+
+## Tecnologias
+
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+
+## Pré-requisitos
+
+- Node.js
+- Back-end rodando (`projeto_permuta_backend`) na porta 3000
+- MongoDB conectado ao back-end
+
+## Como rodar
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O front sobe em [http://localhost:3001](http://localhost:3001).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `lib/api.ts` centraliza o envio do token, o redirecionamento ao login quando a sessão expira (401/403) e a formatação de cidade e data. É usado pelas telas internas; login e cadastro fazem a requisição direto, pois ainda não existe token nessas telas.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Estrutura
 
-## Learn More
+```
+src/
+├── app/
+│   ├── home/               # Home
+│   ├── login/              # Login
+│   ├── cadastro/           # Cadastro
+│   ├── servidor/           # Meu Perfil
+│   │   └── editar/         # Edição de Perfil
+│   └── permutas/           # Minhas Solicitações
+│       ├── [id]/           # Detalhes da Permuta
+│       ├── disponiveis/    # Permutas Disponíveis
+│       └── nova/           # Nova Solicitação
+├── components/
+│   ├── MenuLateral.tsx
+│   ├── PaginaLayout.tsx
+│   ├── CabecalhoPagina.tsx
+│   ├── SeloStatus.tsx
+│   └── ModalConfirmar.tsx
+|   └── Footer.tsx
+└── lib/
+    └── api.ts              # Helpers de requisição, token, formatação e status
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Decisões de projeto
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `lib/api.ts` centraliza o envio do token, o redirecionamento ao login quando a sessão expira (401/403) e a formatação de cidade e data.
+- A data de publicação é extraída do `_id` do MongoDB, sem campo de data no banco.
+- As cidades são salvas em maiúsculo pelo back-end e formatadas no front para exibição.
+- Os componentes de layout (`PaginaLayout`, `CabecalhoPagina`) evitam repetir menu, margens e cabeçalho em cada tela.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Autenticação
 
-## Deploy on Vercel
+O token JWT fica no `localStorage` e é enviado no header `Authorization: Bearer <token>`. Ele expira em 1 hora; depois disso o usuário volta para o login.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Telas
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+As telas seguem o protótipo no Figma.
