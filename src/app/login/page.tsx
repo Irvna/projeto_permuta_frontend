@@ -1,13 +1,44 @@
+"use client";
+
+import { useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Login() {
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
+    const [erro, setErro] = useState('');
+    const [carregando, setCarregando] = useState(false);
+
+    async function enviarLogin(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setErro('');
+        setCarregando(true);
+        try {
+            const resposta = await fetch('/api/servidores/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha }),
+            });
+            const dados = await resposta.json();
+            if (!resposta.ok) throw new Error(dados.mensagem || 'Erro ao entrar.');
+            localStorage.setItem('token', dados.token);
+            router.push('/home');
+        } catch (err) {
+            setErro(err instanceof Error ? err.message : 'Erro ao entrar.');
+        } finally {
+            setCarregando(false);
+        }
+    }
+
     return (
         <div id="login" className="grid xs:grid-rows-[1fr_0.5fr] md:grid-cols-2 w-full h-screen text-white">
             <div className="flex flex-col justify-between items-justify bg-[#10294B] px-3 md:px-10 py-5">
                 <img
                     src="/permutaja_logo.png"
                     alt="Logo Permuta Já"
-                    className="w-45 xs:aling-justify md:w-90 h-auto"
+                    className="w-45 md:w-90 h-auto"
                 />
                 <div className="hidden md:block flex flex-col gap-6">
                     <div className="text-5xl font-bold tracking-1">
@@ -27,11 +58,7 @@ export default function Login() {
                         <p className="text-3xl md:text-5xl font-bold tracking-1">Login</p>
                         <p className="text-xs font-light opacity-80">Use seu e-mail e sua senha</p>
                     </div>
-                    {/* Inputs */}
-                    <form
-                        //onSubmit={enviarLogin}
-                        className="flex flex-col w-full justify-center gap-4">
-                        {/* Email */}
+                    <form onSubmit={enviarLogin} className="flex flex-col w-full justify-center gap-4">
                         <div className="flex flex-col">
                             <label htmlFor="email" className="text-xs md:text-sm font-bold mb-1">
                                 E-mail
@@ -39,14 +66,13 @@ export default function Login() {
                             <input
                                 type="email"
                                 id="email"
-                                //value={email}
-                                //onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
                                 placeholder="exemplo@gmail.com"
                                 required
                             />
                         </div>
-                        {/* Senha */}
                         <div className="flex flex-col mb-6">
                             <label htmlFor="password" className="text-xs md:text-sm font-bold mb-1">
                                 Senha
@@ -54,36 +80,26 @@ export default function Login() {
                             <input
                                 type="password"
                                 id="password"
-                                //value={password}
-                                //onChange={(e) => setPassword(e.target.value)} // Atualiza o estado
+                                value={senha}
+                                onChange={(e) => setSenha(e.target.value)}
                                 className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
                                 placeholder="••••••••"
                                 required
                             />
                         </div>
-                        {/* Botão de Submit */}
+                        {erro && <p className="text-xs text-red-600 text-center">{erro}</p>}
                         <button
                             type="submit"
-                            className="w-full bg-[#21914E] text-white font-bold py-2 rounded-md transition delay-100 ease-in-out hover:scale-102"
+                            disabled={carregando}
+                            className="w-full bg-[#21914E] text-white font-bold py-2 rounded-md transition delay-100 ease-in-out hover:scale-102 disabled:opacity-60"
                         >
-                            Entrar
+                            {carregando ? 'Entrando...' : 'Entrar'}
                         </button>
-
-                        {/* Link extra (opcional) */}
                         <div className="flex flex-col gap-1 text-center">
-                            <Link href="../cadastro/esqueciSenha" className="text-xs md:text-sm text-blue-600 hover:underline">
-                                Esqueceu a senha?
-                            </Link>
                             <div className="text-xs md:text-sm">
                                 Não tem conta?
                                 <Link href="/cadastro" className="text-blue-600 hover:underline ml-1">
                                     Criar Conta
-                                </Link>
-                            </div>
-                            <div className="text-xs md:text-sm">
-                                Não tem conta?
-                                <Link href="/home" className="text-blue-600 hover:underline ml-1">
-                                    teste
                                 </Link>
                             </div>
                         </div>

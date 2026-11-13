@@ -1,14 +1,74 @@
+"use client";
+
+import { useState, type SyntheticEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const CLASSE_INPUT = "h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all";
+const CLASSE_LABEL = "text-xs md:text-sm font-bold mb-1";
+const CABECALHO = { 'Content-Type': 'application/json' };
+
+type Cidade = { _id: string; nomeCidade: string; estado: string };
+
+async function buscarOuCriarCidade(nomeCidade: string, estado: string): Promise<string> {
+    const nome = nomeCidade.trim().toUpperCase();
+    const uf = estado.trim().toUpperCase();
+
+    async function achar() {
+        const resposta = await fetch('/api/cidades');
+        const lista: Cidade[] = await resposta.json();
+        return lista.find((c) => c.nomeCidade === nome && c.estado === uf);
+    }
+
+    let cidade = await achar();
+    if (!cidade) {
+        await fetch('/api/cidades', {
+            method: 'POST',
+            headers: CABECALHO,
+            body: JSON.stringify({ nomeCidade: nome, estado: uf }),
+        });
+        cidade = await achar();
+    }
+    if (!cidade) throw new Error('Não foi possível salvar a cidade.');
+    return cidade._id;
+}
+
 export default function Cadastro() {
+    const router = useRouter();
+    const [form, setForm] = useState({ nome: '', email: '', cargo: '', orgao: '', cidade: '', estado: '', senha: '' });
+    const [erro, setErro] = useState('');
+    const [carregando, setCarregando] = useState(false);
+
+    function atualizar(campo: keyof typeof form, valor: string) {
+        setForm((anterior) => ({ ...anterior, [campo]: valor }));
+    }
+
+    async function enviarCadastro(e: SyntheticEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setErro('');
+        setCarregando(true);
+        try {
+            const cidadeAtual = await buscarOuCriarCidade(form.cidade, form.estado);
+            const { nome, email, cargo, orgao, senha } = form;
+            const resposta = await fetch('/api/servidores', {
+                method: 'POST',
+                headers: CABECALHO,
+                body: JSON.stringify({ nome, email, cargo, orgao, senha, cidadeAtual }),
+            });
+            const dados = await resposta.json();
+            if (!resposta.ok) throw new Error(dados.mensagem || dados.error || 'Erro ao cadastrar.');
+            router.push('/login');
+        } catch (err) {
+            setErro(err instanceof Error ? err.message : 'Erro ao cadastrar.');
+        } finally {
+            setCarregando(false);
+        }
+    }
+
     return (
         <div id="cadastro" className="flex flex-col min-h-screen w-full text-white">
             <div className="flex justify-between items-justify bg-[#10294B] px-3 md:px-10 py-5 md:py-2">
-                <img
-                    src="/permutaja_logo.png"
-                    alt="Logo Permuta Já"
-                    className="w-45 aling-justify md:w-90 h-auto"
-                />
+                <img src="/permutaja_logo.png" alt="Logo Permuta Já" className="w-45 md:w-90 h-auto" />
             </div>
             <div className="flex justify-center items-center text-sm text-black bg-linear-to-b from-[#204573] to-[#10294B] lg:bg-none md:bg-white py-8 h-full">
                 <div className="flex flex-col w-[80vw] lg:w-[50vw] h-auto bg-[#F8FBFD] rounded-[2vw] border border-black px-5 md:px-8 py-6 md:py-12 gap-8 md:gap-15">
@@ -16,100 +76,56 @@ export default function Cadastro() {
                         <p className="text-3xl md:text-5xl font-bold tracking-1">Criar Conta</p>
                         <p className="text-xs font-light opacity-80">Preencha os campos abaixo para criar sua conta</p>
                     </div>
-                    {/* Inputs */}
-                    <form
-                        //onSubmit={enviarLogin}
-                        className="flex flex-col w-full justify-center gap-4">
-                        {/* Nome */}
+                    <form onSubmit={enviarCadastro} className="flex flex-col w-full justify-center gap-4">
                         <div className="flex flex-col">
-                            <label htmlFor="nome" className="text-xs md:text-sm font-bold mb-1">
-                                Nome
-                            </label>
-                            <input
-                                type="text"
-                                id="nome"
-                                //value={nome}
-                                //onChange={(e) => setNome(e.target.value)} // Atualiza o estado
-                                className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
-                                placeholder="Fulano de tal"
-                                required
-                            />
+                            <label htmlFor="nome" className={CLASSE_LABEL}>Nome</label>
+                            <input type="text" id="nome" value={form.nome} onChange={(e) => atualizar('nome', e.target.value)}
+                                className={CLASSE_INPUT} placeholder="Fulano de tal" required />
                         </div>
-                        {/* Email */}
                         <div className="flex flex-col">
-                            <label htmlFor="email" className="text-xs md:text-sm font-bold mb-1">
-                                E-mail
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                //value={email}
-                                //onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
-                                className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
-                                placeholder="exemplo@gmail.com"
-                                required
-                            />
+                            <label htmlFor="email" className={CLASSE_LABEL}>E-mail</label>
+                            <input type="email" id="email" value={form.email} onChange={(e) => atualizar('email', e.target.value)}
+                                className={CLASSE_INPUT} placeholder="exemplo@gmail.com" required />
                         </div>
                         <div className="flex flex-col justify-between md:flex-row gap-2">
-                            {/* Cargo */}
                             <div className="flex flex-col w-full">
-                                <label htmlFor="cargo" className="text-xs md:text-sm font-bold mb-1">
-                                    Cargo
-                                </label>
-                                <input
-                                    type="text"
-                                    id="cargo"
-                                    //value={email}
-                                    //onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
-                                    className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
-                                    placeholder="exemplo@gmail.com"
-                                    required
-                                />
+                                <label htmlFor="cargo" className={CLASSE_LABEL}>Cargo</label>
+                                <input type="text" id="cargo" value={form.cargo} onChange={(e) => atualizar('cargo', e.target.value)}
+                                    className={CLASSE_INPUT} placeholder="Assistente Administrativo" required />
                             </div>
-                            {/* Cidade */}
                             <div className="flex flex-col w-full">
-                                <label htmlFor="cidade" className="text-xs md:text-sm font-bold mb-1">
-                                    Cidade - UF
-                                </label>
-                                <input
-                                    type="text"
-                                    id="cidade"
-                                    //value={email}
-                                    //onChange={(e) => setEmail(e.target.value)} // Atualiza o estado
-                                    className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
-                                    placeholder="Cidade - UF"
-                                    required
-                                />
+                                <label htmlFor="orgao" className={CLASSE_LABEL}>Órgão</label>
+                                <input type="text" id="orgao" value={form.orgao} onChange={(e) => atualizar('orgao', e.target.value)}
+                                    className={CLASSE_INPUT} placeholder="Prefeitura Municipal de Dourados" required />
                             </div>
                         </div>
-                        {/* Senha */}
+                        <div className="flex flex-col justify-between md:flex-row gap-2">
+                            <div className="flex flex-col w-full md:w-3/4">
+                                <label htmlFor="cidade" className={CLASSE_LABEL}>Cidade</label>
+                                <input type="text" id="cidade" value={form.cidade} onChange={(e) => atualizar('cidade', e.target.value)}
+                                    className={CLASSE_INPUT} placeholder="Dourados" required />
+                            </div>
+                            <div className="flex flex-col w-full md:w-1/4">
+                                <label htmlFor="estado" className={CLASSE_LABEL}>Estado</label>
+                                <input type="text" id="estado" maxLength={2} value={form.estado} onChange={(e) => atualizar('estado', e.target.value)}
+                                    className={CLASSE_INPUT} placeholder="MS" required />
+                            </div>
+                        </div>
                         <div className="flex flex-col mb-6">
-                            <label htmlFor="password" className="text-xs md:text-sm font-bold mb-1">
-                                Senha
-                            </label>
-                            <input
-                                type="password"
-                                id="password"
-                                //value={password}
-                                //onChange={(e) => setPassword(e.target.value)} // Atualiza o estado
-                                className="h-[8vw] md:h-[2.5vw] p-2 border border-gray-300 rounded-md text-xs outline-none focus:ring-1 focus:ring-blue-100 transition-all"
-                                placeholder="••••••••"
-                                required
-                            />
+                            <label htmlFor="password" className={CLASSE_LABEL}>Senha</label>
+                            <input type="password" id="password" value={form.senha} onChange={(e) => atualizar('senha', e.target.value)}
+                                className={CLASSE_INPUT} placeholder="••••••••" required />
                         </div>
-                        {/* Botão de Submit */}
+                        {erro && <p className="text-xs text-red-600 text-center">{erro}</p>}
                         <button
                             type="submit"
-                            className="w-full bg-[#21914E] text-white font-bold py-2 rounded-md transition delay-100 ease-in-out hover:scale-102"
+                            disabled={carregando}
+                            className="w-full bg-[#21914E] text-white font-bold py-2 rounded-md transition delay-100 ease-in-out hover:scale-102 disabled:opacity-60"
                         >
-                            Cadastrar
+                            {carregando ? 'Cadastrando...' : 'Cadastrar'}
                         </button>
-
-                        {/* Link extra (opcional) */}
-                        <div className="flex flex-col gap-1 text-center">
-                            <a href="#" className="text-xs md:text-sm no-underline">
-                                Possui tem conta? <Link href="/login" className="text-blue-600 hover:underline">Entrar</Link>
-                            </a>
+                        <div className="text-xs md:text-sm text-center">
+                            Já possui conta? <Link href="/login" className="text-blue-600 hover:underline">Entrar</Link>
                         </div>
                     </form>
                 </div>
